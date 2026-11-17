@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VMA Data Extractor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <button id="back" class="icon-btn" aria-label="Volver" hidden><span data-icon="arrow-left"></span></button>
+    <span class="app-mark" data-icon="package"></span>
+    <span id="title" class="title">VMA Data Extractor</span>
+    <span class="spacer"></span>
+    <span id="top-extra" class="muted small"></span>
+    <span id="version" class="version" title="Versión"></span>
+  </header>
+
+  <!-- 1. Inicio -->
+  <main id="view-home" class="view">
+    <section id="drop" class="drop">
+      <span class="drop-icon" data-icon="upload"></span>
+      <h1>Arrastra aquí un backup de Proxmox</h1>
+      <p class="muted">.vma, .vma.zst o .vma.gz · también una carpeta ya extraída</p>
+      <div class="row gap">
+        <button id="open-backup" class="primary">Abrir backup</button>
+        <button id="open-folder">Abrir carpeta ya extraída</button>
+      </div>
+    </section>
+    <section id="recents-wrap" hidden>
+      <p class="label">Recientes</p>
+      <div id="recents" class="list"></div>
+    </section>
+  </main>
+
+  <!-- 2. Backup -->
+  <main id="view-backup" class="view" hidden>
+    <section class="card">
+      <div class="row gap center">
+        <div id="vm-icon" class="vm-icon"></div>
+        <div class="grow">
+          <h2 id="vm-name"></h2>
+          <p id="vm-meta" class="muted small"></p>
+        </div>
+        <span id="checksum-pill" class="pill" hidden></span>
+      </div>
+      <div id="disks" class="disk-grid"></div>
+      <div id="analyze-box" class="progress-box" hidden>
+        <div class="row small"><span id="analyze-text">Analizando el backup para calcular el espacio necesario…</span><span class="spacer"></span><span id="analyze-stats" class="muted"></span></div>
+        <div class="bar"><div id="analyze-bar"></div></div>
+        <div class="row end"><button id="analyze-cancel" class="ghost small-btn">Cancelar análisis</button></div>
+      </div>
+      <div id="checksum-warn" class="banner warn" hidden>
+        <span data-icon="alert"></span>
+        <div><strong>El backup está dañado.</strong> El checksum no coincide. Se ha marcado «Ignorar checksum» para recuperar todo lo posible; algún archivo puede quedar con datos erróneos.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <p class="label">Extraer en</p>
+      <div class="row gap">
+        <input id="outdir" class="grow" spellcheck="false">
+        <button id="pick-outdir" class="icon-btn bordered" aria-label="Elegir carpeta"><span data-icon="folder"></span></button>
+      </div>
+      <p id="space" class="small space"></p>
+      <div class="row gap center">
+        <button id="extract" class="primary">Extraer</button>
+        <button id="verify">Verificar</button>
+        <span class="spacer"></span>
+        <label class="check small"><input type="checkbox" id="ignore-checksum"> Ignorar checksum (backup dañado)</label>
+      </div>
+      <div id="extract-box" class="progress-box" hidden>
+        <div class="row small"><span id="extract-text">Extrayendo…</span><span class="spacer"></span><span id="extract-stats" class="muted"></span></div>
+        <div class="bar big"><div id="extract-bar"></div></div>
+        <div class="row small muted"><span id="extract-detail"></span><span class="spacer"></span><button id="extract-cancel" class="small-btn">Cancelar</button></div>
+      </div>
+      <div id="extract-result" hidden></div>
+    </section>
+  </main>
+
+  <!-- 3. Explorador -->
+  <main id="view-explorer" class="view explorer" hidden>
+    <aside class="sidebar">
+      <p class="label">Volúmenes</p>
+      <div id="vols"></div>
+      <div class="sidebar-foot">
+        <p id="usage" class="muted small"></p>
+        <button id="close-extraction" class="small-btn">Cerrar extracción</button>
+      </div>
+    </aside>
+    <section class="files">
+      <div class="files-head">
+        <nav id="crumbs" class="crumbs"></nav>
+        <span class="spacer"></span>
+        <div class="search"><span data-icon="search"></span><input id="filter" placeholder="Buscar en esta carpeta"></div>
+      </div>
+      <div class="table-wrap">
+        <table class="files-table">
+          <thead><tr>
+            <th class="c-check"><input type="checkbox" id="select-all" aria-label="Seleccionar todo"></th>
+            <th>Nombre</th><th class="c-size">Tamaño</th><th class="c-date">Modificado</th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div id="files-empty" class="empty muted" hidden></div>
+      </div>
+      <div class="files-foot">
+        <span id="sel-count" class="muted small"></span>
+        <span class="spacer"></span>
+        <button id="copy" class="primary"><span data-icon="download"></span> Copiar a…</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Diálogo genérico -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <h3 id="modal-title"></h3>
+      <div id="modal-body"></div>
+      <div id="modal-progress" hidden>
+        <div class="bar big"><div id="modal-bar"></div></div>
+        <div class="row small muted"><span id="modal-ptext" class="ellipsis grow"></span><span id="modal-pstats"></span></div>
+      </div>
+      <div id="modal-actions" class="row end gap"></div>
+    </div>
+  </div>
+
+  <div id="dropping" class="dropping" hidden><div><span data-icon="upload"></span><p>Suelta para abrir</p></div></div>
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="icons.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

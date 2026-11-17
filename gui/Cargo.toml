@@ -1,0 +1,16 @@
+[package]
+name = "vma-extractor"
+version = "1.0.0"
+edition = "2024"
+description = "Interfaz gráfica para extraer y explorar backups VMA de Proxmox"
+
+[build-dependencies]
+tauri-build = "2"
+
+[dependencies]
+anyhow = "1.0.104"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+tauri = { version = "2", features = ["custom-protocol"] }
+tauri-plugin-dialog = "2"
+vmatool = { path = ".." }

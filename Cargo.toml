@@ -1,0 +1,25 @@
+[package]
+name = "vmatool"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.104"
+clap = { version = "4.6.8", features = ["derive"] }
+ext4-view = { version = "1.0.0", features = ["std"] }
+flate2 = "1.1.11"
+ntfs = "0.4.0"
+serde = { version = "1.0.229", features = ["derive"] }
+zstd = { version = "0.14.4", features = ["experimental"] }
+
+[target."cfg(windows)".dependencies]
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_IO", "Win32_System_Ioctl"] }
+
+[target."cfg(unix)".dependencies]
+libc = "0.2.191"
+
+[workspace]
+members = [".", "gui"]
+
+[profile.release]
+opt-level = 3

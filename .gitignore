@@ -1,0 +1,24 @@
+/target
+/.claude
+*.raw
+/extraido*/
+
+# backups de Proxmox y sus logs (no se suben al repositorio)
+*.vma
+*.vma.zst
+*.vma.gz
+*.vma.lzo
+vzdump-*.log
+*.notes
+
+# ejecutables compilados (se publican en Releases)
+/VMA Data Extractor.exe
+/vmatool.exe
+
+# contenido de extracciones
+extract-report.txt
+qemu-server.conf
+qemu-server.fw
+
+# generado por tauri-build
+/gui/gen/schemas
